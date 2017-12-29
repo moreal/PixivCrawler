@@ -1,0 +1,25 @@
+package me.moreal.util;
+
+import java.io.InputStream;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
+public class Util {
+	public static boolean downloadImage(String url, String folder) {
+		int index = 0;
+		while(url.indexOf("/",index) != -1)
+			index = url.indexOf("/",index);
+		return downloadImage(url, folder, url.substring(index));
+	}
+	
+	public static boolean downloadImage(String url, String folder, String name) {
+		try {
+			HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+			conn.getOutputStream().write(String.format("GET %s HTTP/1.1\r\nHost:www.pixiv.net\r\n\r\n", url).getBytes());
+			
+		} catch (Exception e) { return false; }
+		
+		return true;
+	}
+}

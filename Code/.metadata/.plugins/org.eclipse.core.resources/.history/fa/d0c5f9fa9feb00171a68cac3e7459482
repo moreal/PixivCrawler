@@ -1,0 +1,25 @@
+package me.moreal.util;
+
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
+public class Util {
+	public static boolean downloadImage(String url, String folder) {
+		try {
+			HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+			conn.getInputStream().write("".getBytes());
+		} catch (Exception e) { return false; }
+		
+		return true;
+	}
+	
+	public static boolean downloadImage(String url, String folder, String name) {
+		try {
+			HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+			conn.
+		} catch (Exception e) { return false; }
+		
+		return true;
+	}
+}

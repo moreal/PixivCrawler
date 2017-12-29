@@ -1,0 +1,56 @@
+package me.moreal.network;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import me.moreal.error.Error;
+
+public class HttpSocket {
+	private Socket sock = null;
+	
+	private InputStream iStream = null;
+	private OutputStream oStream = null;
+	
+	private String url = null;
+	private String getParam = null;
+	private String postParam = null;
+	
+	public HttpSocket(String url) {
+		this.url = url;
+		
+		try {
+			
+			this.sock = new Socket(url, 80);
+			this.iStream = sock.getInputStream();
+			this.oStream = sock.getOutputStream();
+			
+		} catch (UnknownHostException e) {
+			Error.showError("Wrong URL..!!");
+		} catch (IOException e) {
+			Error.showError("There was Error : IO");
+		}
+	}
+	
+	public void setGetParameter(String param) {
+		this.getParam = param;
+	}
+	
+	public void setPostParameter(String param) {
+		this.postParam = param;
+	}
+	
+	public String getGetParameter() {
+		return getParam;
+	}
+	
+	public String getPostParameter() {
+		return postParam;
+	}
+	
+	public boolean sendPost() {
+		
+	}
+}

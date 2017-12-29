@@ -1,0 +1,9 @@
+package me.moreal.main;
+
+public class Main {
+	public static void main(String args[])
+	{
+		PixivParser parser = new PixivParser("https://www.pixiv.net/member_illust.php?mode=medium&illust_id=137", 137);
+		parser.start();
+	}
+}

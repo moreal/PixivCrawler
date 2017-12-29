@@ -1,0 +1,7 @@
+package me.moreal.util;
+
+public class Util {
+	public static boolean downloadImage() {
+		
+	}
+}

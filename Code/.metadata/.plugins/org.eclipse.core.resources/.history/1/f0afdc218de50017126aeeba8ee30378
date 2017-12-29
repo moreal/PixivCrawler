@@ -1,0 +1,10 @@
+package me.moreal.network;
+
+public class HttpRequest {
+	public 
+	
+	public String toString() {
+		
+		return 
+	}
+}

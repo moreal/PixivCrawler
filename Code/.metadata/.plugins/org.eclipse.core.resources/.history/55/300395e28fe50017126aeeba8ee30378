@@ -1,0 +1,14 @@
+package me.moreal.network;
+
+public class HttpRequest {
+	private 
+	
+	public HttpRequest(String method, String url) {
+		
+	}
+	
+	public String toString() {
+		
+		return null; 
+	}
+}

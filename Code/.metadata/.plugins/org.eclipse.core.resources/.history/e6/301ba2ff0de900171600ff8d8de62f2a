@@ -1,0 +1,11 @@
+package me.moreal.main;
+
+public class Main {
+	public static void main(String args[])
+	{
+		PixivParser parser = new PixivParser("www.pixiv.net", 137);
+		parser.start();
+		
+		
+	}
+}

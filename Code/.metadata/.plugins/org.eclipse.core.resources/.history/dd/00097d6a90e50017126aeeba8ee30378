@@ -1,0 +1,21 @@
+package me.moreal.network;
+
+import java.util.Queue;
+
+public class HttpRequest {
+	private String method;
+	private Queue<String> lines;
+	
+	public HttpRequest(String method, String url, String path) {
+		this.lines.add(method + "")
+	}
+	
+	public String toString() {
+		String s = "";
+		while((s = lines.poll()) != null)
+		{
+			
+		}
+		return null; 
+	}
+}

@@ -1,0 +1,15 @@
+package me.moreal.network;
+
+import java.net.Socket;
+
+import javax.net.ssl.SSLSocketFactory;
+
+public class SSLSocket {
+	SSLSocketFactory ssf = null;
+	Socket s = null;
+	
+	public SSLSocket() {
+		ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+		s = ssf.createSocket();
+	}
+}

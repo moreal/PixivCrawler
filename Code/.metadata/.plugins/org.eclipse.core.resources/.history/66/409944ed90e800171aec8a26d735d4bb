@@ -1,0 +1,7 @@
+package me.moreal.network;
+
+import javax.net.ssl.SSLSocketFactory;
+
+public class SSLSocket {
+	SSLSocketFactory s = (SSLSocketFactory) SSLSocketFactory.getDefault();
+}
