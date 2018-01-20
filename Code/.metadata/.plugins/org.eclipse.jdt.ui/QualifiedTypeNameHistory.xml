@@ -21,4 +21,6 @@
 <fullyQualifiedTypeName name="java.net.MalformedURLException"/>
 <fullyQualifiedTypeName name="java.io.IOException"/>
 <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
+<fullyQualifiedTypeName name="javax.swing.JPanel"/>
+<fullyQualifiedTypeName name="chrriis.dj.nativeswing.swtimpl.components.JWebBrowser"/>
 </qualifiedTypeNameHistroy>

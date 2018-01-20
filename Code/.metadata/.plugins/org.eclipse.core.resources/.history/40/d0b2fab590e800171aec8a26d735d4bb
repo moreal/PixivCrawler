@@ -1,5 +1,0 @@
-package me.moreal.network;
-
-public class SSLSocket {
-
-}

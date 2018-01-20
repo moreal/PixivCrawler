@@ -3,7 +3,7 @@ package me.moreal.main;
 public class Main {
 	public static void main(String args[])
 	{
-		PixivParser parser = new PixivParser("www.pixiv.net", 176);
+		PixivParser parser = new PixivParser("www.pixiv.net", 61487000);
 		parser.run();
 		/*
 		try {

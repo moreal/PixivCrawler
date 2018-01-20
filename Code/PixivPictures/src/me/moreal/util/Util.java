@@ -1,13 +1,16 @@
 package me.moreal.util;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -17,35 +20,33 @@ public class Util {
 		while(url.indexOf("/",index) != -1)
 			index = url.indexOf("/",index);
 		
-		return downloadImage(url, folder, url.substring(index));
+		return downloadImage(url, folder, url.substring(index), null);
 	}
 	
-	public static boolean downloadImage(String url, String folder, String name) {
-			System.out.println("URL:"+url);
-			System.out.println("Folder:"+folder);
-			System.out.println("Name:"+name);
+	public static boolean downloadImage(String url, String folder, String name, String Cookies) {
+			System.out.println("[+] Download ImageURL:"+url);
+			
 			HttpsURLConnection conn;
 			try {
 				conn = (HttpsURLConnection) new URL(url).openConnection();
+				conn.addRequestProperty("Referer", url);
+				conn.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
 				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				br.readLine();
-				byte[] b = new byte[1024*1024];
-				conn.getInputStream().read(b);
-				String s = new String(b);
-				
-				s.substring(s.indexOf("Content: "), s.length());
+
 				File f = new File(folder + name);
-				System.out.println("PATH:"+f.getAbsolutePath());
+
 				if(!f.exists())
 				{
 					f.createNewFile();
 					System.out.println("There is no file, so I created file");
 				}
 				
-				FileImageOutputStream fios = new FileImageOutputStream(f);
+				FileImageOutputStream fios = new FileImageOutputStream(f); 
+
+				BufferedImage image = ImageIO.read(conn.getInputStream());
 				
-				fios.write(s.getBytes());
-				fios.flush();
+				System.out.println("[--] " +name.substring(name.length()-3, name.length()));
+				ImageIO.write(image, name.substring(name.length()-3, name.length()), f);
 				
 				fios.close();
 			} catch (MalformedURLException e1) {
