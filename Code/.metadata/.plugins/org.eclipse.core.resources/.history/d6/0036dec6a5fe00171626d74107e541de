@@ -1,0 +1,69 @@
+package me.moreal.util;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Config {
+	private static String dir = System.getProperty("user.dir") + "/PixivCrawler/";
+	private static String config = dir + "config.txt";
+	
+	public static String DIRECTORY = null;
+	public static int leastView = 0, leastGood = 0;
+
+	public static boolean checkConfigFile() {
+		return new File(config).exists();
+	}
+
+	public static void createConfigFile() {
+
+		File directory = new File(dir);
+
+		if (!directory.exists())
+			directory.mkdirs();
+	
+		File f = new File(config);
+
+		try {
+			if (!f.exists())
+				f.createNewFile();
+			
+			FileWriter fw = new FileWriter(f);
+			
+			fw.write(String.format("Directory:%s\n",dir + "Pictures/"));
+			fw.write(String.format("LeastGood:%d\n",1000));
+			fw.write(String.format("LeastView:%d\n",2000));
+			
+			fw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadConfigFile() {
+		Scanner sc = new Scanner(System.in).useDelimiter(":|\n");
+		
+		String attr = null;
+		
+		while (sc.hasNextLine()) {
+			attr = sc.next();
+			
+			if (attr == null) 
+				break;
+			
+			if (attr.equals("Directory")) {
+				DIRECTORY = sc.next();
+			} else if (attr.equals("LeastView")) {
+				leastView = sc.nextInt();
+			} else if (attr.equals("LeastGood")) {
+				leastGood = sc.nextInt();
+			}
+		}
+	}
+	
+	public static void initByConfig() {
+		
+	}
+}

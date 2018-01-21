@@ -1,45 +1,41 @@
 package me.moreal.main;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 
-import me.moreal.network.HttpSocket;
+import me.moreal.util.Config;
 import me.moreal.util.Util;
 
 public class PixivParser extends Thread {
-	private static String[] banned = {"乳","エロ"};
-	private int illust_id = 0;
+	private static ArrayList<String> banned = new ArrayList<String>();
 	private String url = null;
 
-	private HttpSocket sock = null;
+	//private HttpSocket sock = null;
 	private String page = null;
 
 	private BufferedReader br = null;
 	private HttpsURLConnection conn = null;
 
-	public PixivParser(String url, int startnum) {
-		this.illust_id = startnum;
-		this.url = url;
-		// sock = new HttpSocket(this.url, "/member_illust.php"); //
-		// ?mode=medium&illust_id=61838494
-	}
-
-	public PixivParser(String url) {
-		this(url, 0);
+	public PixivParser() {
+		
+		String[] arr = {"乳","エロ"};
+		
+		for (String s : arr) 
+			banned.add(s);
+	
 	}
 
 	public void run() {
 		while (true) {
 			try {
-				url = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + illust_id;
+				url = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + ++Config.illust_id;
 				
 				conn = (HttpsURLConnection) new URL(url).openConnection();
 				br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -58,13 +54,11 @@ public class PixivParser extends Thread {
 					continue;
 				}
 				
-				if (getViews() < 1000) {
-					//System.out.println("[+] It is too lower view point.. : " + getGoodPoint());
+				if (getViews() < Config.leastView) {
 					continue;
 				}
 				
-				if (getGoodPoint() < 1000) {
-					//System.out.println("[+] It is too lower good point.. : " + getGoodPoint());
+				if (getGoodPoint() < Config.leastGood) {
 					continue;
 				}
 				
@@ -73,6 +67,7 @@ public class PixivParser extends Thread {
 
 				try {
 					HttpsURLConnection c = (HttpsURLConnection) new URL(image_url).openConnection();
+					
 					c.addRequestProperty("Referer", url);
 					c.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
 					
@@ -84,14 +79,22 @@ public class PixivParser extends Thread {
 				System.out.println("[*] ImageLink is " + image_url);
 				System.out.println("[*] ImageFileName is " + toFileName(image_url));
 				
-				Util.downloadImage(image_url, "D:/TEST/", toFileName(image_url), null);
+				String dirname = "D:/TESTT/" + String.format("%s - %s (%s)/",getAuthor(), getAuthorId(), getFollowersPoint(getAuthorId()));
+				File dir = new File(dirname);
 				
-				System.out.println("");
+				if (!dir.exists())
+					dir.mkdirs();
+				
+				String filename = getTitle() + "." + getFormat(image_url);
+				filename = filename.replaceAll("\\||\"|\\\\|:|\\?|>|<|/", "_");
+				
+				System.out.println("[*] filename : " + filename);
+				
+				Util.downloadImage(image_url, dirname, filename, null);
+				
 			} catch (FileNotFoundException e) {
 				
 			} catch (IOException e) {
-			} finally {
-				++illust_id;
 			}
 		}
 	}
@@ -103,7 +106,12 @@ public class PixivParser extends Thread {
 		if (start == -1 || end == -1)
 			return -1;
 
-		return Integer.parseInt(page.substring(start+54,end));
+		try {
+			return Integer.parseInt(page.substring(start+54,end));
+		} catch (Exception e) {
+			System.out.println(page);
+			return -1;
+		}
 	}
 	
 	private int getGoodPoint() {
@@ -115,15 +123,57 @@ public class PixivParser extends Thread {
 		
 		return Integer.parseInt(page.substring(start+54,end));
 	}
+	
+	private int getFollowersPoint(String id) {
+		String url = "https://www.pixiv.net/member.php?id=" + id;
+		
+		try {
+			conn = (HttpsURLConnection) new URL(url).openConnection();
+			br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String p = "";
+
+			while (br.ready())
+				p += br.readLine();
+			
+			String fmt = String.format("data-title=\"showBookmarkRegister\" data-user-id=\"%s\">", id);
+			
+			int start = p.indexOf(fmt);
+			int end = p.indexOf("</a>",start+fmt.length());
+			
+			try {
+				return Integer.parseInt(p.substring(start+fmt.length(), end));
+			} catch (Exception e) {
+				System.out.println(url);
+				System.out.println(p);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
+	}
 
 	private String getAuthor() {
-		int start = page.indexOf("<div class=\"userdata\"><h1 class=\"title\">");
-		int end = page.indexOf("</h1>",start + 40);
+		String fmt = String.format("<h2 class=\"name\"><a href=\"member.php?id=%s\">", getAuthorId());
+		int start = page.indexOf(fmt);
+		int end = page.indexOf("</a>", start + fmt.length());
 		
 		if (start == -1 || end == -1)
 			return "No Author";
 		
-		return page.substring(start + 40, end);	
+		return page.substring(start + fmt.length(), end).replaceAll("\"", "");
+	}
+	
+	private String getAuthorId() {
+		int start = page.indexOf("<a href=\"member.php?id=");
+		int end= page.indexOf(">", start + 23);
+		
+		if (start == -1 || end == -1)
+			return "No AuthorId";
+		
+		return page.substring(start + 23, end).replaceAll("\"", "");
 	}
 
 	private String getImageLink() {
@@ -139,7 +189,7 @@ public class PixivParser extends Thread {
 
 	private String getTitle() {
 		int start = page.indexOf("<title>");
-		int end = page.indexOf("</title>", start);
+		int end = page.indexOf("</title>", start+7);
 
 		return page.substring(start + 7, end);
 	}
@@ -162,5 +212,9 @@ public class PixivParser extends Thread {
 				return true;
 		
 		return false;
+	}
+	
+	private String getFormat(String name) {
+		return name.substring(name.length()-3, name.length());
 	}
 }

@@ -1,0 +1,16 @@
+package me.moreal.util;
+
+import java.io.File;
+
+public class Config {
+	public static boolean checkConfigFile() {
+		String s = System.getProperty("user.dir") + "/PixivCrawler/";
+		File f = new File(s + "config.txt");
+		
+		return f.exists();
+	}
+	
+	public static boolean createConfigFile() {
+		
+	}
+}

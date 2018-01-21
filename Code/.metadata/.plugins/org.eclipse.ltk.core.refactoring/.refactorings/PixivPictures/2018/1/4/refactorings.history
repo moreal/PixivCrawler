@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;startnum&apos; in &apos;me.moreal.util.Config&apos; to &apos;illust_id&apos;&#x0D;&#x0A;- Original project: &apos;PixivPictures&apos;&#x0D;&#x0A;- Original element: &apos;me.moreal.util.Config.startnum&apos;&#x0D;&#x0A;- Renamed element: &apos;me.moreal.util.Config.illust_id&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;startnum&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;me.moreal.util{Config.java[Config^startnum" name="illust_id" references="true" setter="false" stamp="1516539065962" textual="false" version="1.0"/>
+</session>

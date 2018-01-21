@@ -1,10 +1,19 @@
 package me.moreal.main;
 
+import me.moreal.util.Config;
+
 public class Main {
 	public static void main(String args[])
 	{
-		PixivParser parser = new PixivParser("www.pixiv.net", 61487000);
-		parser.run();
+		if(!Config.checkConfigFile())
+			Config.createConfigFile();
+		
+		Config.loadConfigFile();
+		
+		new PixivParser().run();
+		new PixivParser().run();
+		new PixivParser().run();
+		new PixivParser().run();
 		/*
 		try {
 			SSLSocket s = (SSLSocket) SSLSocketFactory.getDefault().createSocket("www.pixiv.net",80);

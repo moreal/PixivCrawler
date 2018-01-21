@@ -1,0 +1,5 @@
+package me.moreal.util;
+
+public class Config {
+
+}
