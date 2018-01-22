@@ -11,7 +11,7 @@ public class Config {
 	private static String dir = System.getProperty("user.dir") + "/PixivCrawler/";
 	private static String config = dir + "config.txt";
 	
-	public static String DIRECTORY = null;
+	public static String DIRECTORY = dir + "Pictures/";
 	public static int leastView = 0, leastGood = 0;
 	public static File lastFind = null;
 	public static int illust_id = 0;
@@ -35,9 +35,9 @@ public class Config {
 			
 			FileWriter fw = new FileWriter(f);
 			
-			fw.write(String.format("Directory:%s\n",dir + "Pictures/"));
-			fw.write(String.format("LeastGood:%d\n",1000));
-			fw.write(String.format("LeastView:%d\n",2000));
+			fw.write(String.format("Directory?%s\n",dir + "Pictures/"));
+			fw.write(String.format("LeastGood?%d\n",1000));
+			fw.write(String.format("LeastView?%d\n",2000));
 			
 			fw.close();
 			
@@ -47,30 +47,35 @@ public class Config {
 	}
 	
 	public static void loadConfigFile() {
-		@SuppressWarnings("resource")
-		Scanner sc = new Scanner(System.in).useDelimiter(":|\n");
-		
-		String attr = null;
-		
-		while (sc.hasNextLine()) {
-			attr = sc.next();
-			
-			if (attr == null) 
-				break;
-			
-			if (attr.equals("Directory")) {
-				DIRECTORY = sc.next();
-			} else if (attr.equals("LeastView")) {
-				leastView = sc.nextInt();
-			} else if (attr.equals("LeastGood")) {
-				leastGood = sc.nextInt();
-			}
-		}
-		
-		sc.close();
-		
 		try {
-			lastFind = new File(dir + "0.last");
+			@SuppressWarnings("resource")
+			Scanner sc = new Scanner(new FileInputStream(new File(config))).useDelimiter("\\?|\n");
+
+			String attr = null;
+			
+			while (sc.hasNext()) {
+				attr = sc.next();
+				
+				System.out.println(attr);
+				
+				if (attr == null) 
+					break;
+				
+				if (attr.equals("Directory")) {
+					DIRECTORY = sc.next();
+				} else if (attr.equals("LeastView")) {
+					leastView = sc.nextInt();
+				} else if (attr.equals("LeastGood")) {
+					leastGood = sc.nextInt();
+				}
+			}
+			
+			sc.close();
+		} catch (FileNotFoundException e1) {}
+		System.out.println("WHY SCAN END?");
+		System.out.println("TEST");
+		try {
+			lastFind = new File(dir + ".last");
 			
 			if(!lastFind.exists()) {
 				lastFind.createNewFile();
@@ -80,7 +85,9 @@ public class Config {
 			}
 			
 			Scanner scanner = new Scanner(new FileInputStream(lastFind));
+			System.out.println("TEST SCAN");
 			illust_id = scanner.nextInt();
+			System.out.println("TEST SCAN END");
 			scanner.close();
 			
 		} catch (FileNotFoundException e) {
@@ -92,11 +99,11 @@ public class Config {
 	
 	public static void saveStartNum() {
 		
-		if(lastFind.exists())
-			lastFind.delete();
+		//if(lastFind.exists())
+			//lastFind.delete();
 		
 		try {
-			lastFind.createNewFile();
+			//lastFind.createNewFile();
 			
 			FileWriter fw = new FileWriter(lastFind);
 			
@@ -111,7 +118,7 @@ public class Config {
 	
 	public static void initByConfig() {
 		File directory = new File(DIRECTORY);
-		
+		System.out.println("TEST INIT");
 		if (!directory.exists()) {
 			directory.mkdirs();
 		} else if (directory.isFile()) {

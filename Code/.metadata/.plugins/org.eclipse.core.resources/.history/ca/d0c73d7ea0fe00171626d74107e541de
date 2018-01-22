@@ -1,9 +1,0 @@
-package me.moreal.util;
-
-import java.io.File;
-
-public class Config {
-	public static boolean checkConfigFile() {
-		//File f = new File();
-	}
-}

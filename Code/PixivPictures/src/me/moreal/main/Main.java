@@ -5,14 +5,17 @@ import me.moreal.util.Config;
 public class Main {
 	public static void main(String args[])
 	{
+		System.setProperty("file.encoding", "UTF-8");
+		System.out.println(Config.illust_id + "Start" + "/" + System.getProperty("file.encoding"));
 		if(!Config.checkConfigFile())
 			Config.createConfigFile();
+		System.out.println(Config.illust_id + "Start");
 		
 		Config.loadConfigFile();
 		
-		new PixivParser().run();
-		new PixivParser().run();
-		new PixivParser().run();
+		Config.initByConfig();
+		
+		System.out.println(Config.illust_id + "Start");
 		new PixivParser().run();
 		/*
 		try {

@@ -3,6 +3,7 @@ package me.moreal.main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -14,7 +15,7 @@ import me.moreal.util.Config;
 import me.moreal.util.Util;
 
 public class PixivParser extends Thread {
-	private static ArrayList<String> banned = new ArrayList<String>();
+	private ArrayList<String> banned = new ArrayList<String>();
 	private String url = null;
 
 	//private HttpSocket sock = null;
@@ -29,7 +30,6 @@ public class PixivParser extends Thread {
 		
 		for (String s : arr) 
 			banned.add(s);
-	
 	}
 
 	public void run() {
@@ -37,15 +37,19 @@ public class PixivParser extends Thread {
 			try {
 				url = "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + ++Config.illust_id;
 				
+				//System.out.println("[+] Number : " + Config.illust_id);
+
+				Config.saveStartNum();
+				
 				conn = (HttpsURLConnection) new URL(url).openConnection();
-				br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 				page = "";
 
 				while (br.ready())
 					page += br.readLine();
 				
 				String image_url = getImageLink();
-
+				
 				if (image_url == null) {
 					continue;
 				}
@@ -79,7 +83,7 @@ public class PixivParser extends Thread {
 				System.out.println("[*] ImageLink is " + image_url);
 				System.out.println("[*] ImageFileName is " + toFileName(image_url));
 				
-				String dirname = "D:/TESTT/" + String.format("%s - %s (%s)/",getAuthor(), getAuthorId(), getFollowersPoint(getAuthorId()));
+				String dirname = Config.DIRECTORY + String.format("%s - %s (%s)/",getAuthor(), getAuthorId(), getFollowersPoint(getAuthorId()));
 				File dir = new File(dirname);
 				
 				if (!dir.exists())
@@ -100,28 +104,28 @@ public class PixivParser extends Thread {
 	}
 	
 	private int getViews() {
-		int start = page.indexOf("<li class=\"info\"><span>閲覧数</span><span class=\"views\">"); // <li class=\"info\"><span>[^<]+
-		int end = page.indexOf("</span>",start+54);
+		int start = page.indexOf("</span><span class=\"views\">"); // <li class=\"info\"><span>[^<]+
+		start = page.indexOf("</span><span class=\"views\">",start+27);
+		int end = page.indexOf("</span>",start+27);
 		
 		if (start == -1 || end == -1)
 			return -1;
-
+		
 		try {
-			return Integer.parseInt(page.substring(start+54,end));
+			return Integer.parseInt(page.substring(start+27,end));
 		} catch (Exception e) {
-			System.out.println(page);
 			return -1;
 		}
 	}
 	
 	private int getGoodPoint() {
-		int start = page.indexOf("<li class=\"info\"><span>いいね！</span><span class=\"views\">"); // <li class=\"info\"><span>[^<]+
-		int end = page.indexOf("</span>",start+54);
+		int start = page.indexOf("</span><span class=\"views\">"); // <li class=\"info\"><span>[^<]+
+		int end = page.indexOf("</span>",start+27);
 		
 		if (start == -1 || end == -1)
 			return -1;
 		
-		return Integer.parseInt(page.substring(start+54,end));
+		return Integer.parseInt(page.substring(start+27,end));
 	}
 	
 	private int getFollowersPoint(String id) {
@@ -143,8 +147,8 @@ public class PixivParser extends Thread {
 			try {
 				return Integer.parseInt(p.substring(start+fmt.length(), end));
 			} catch (Exception e) {
-				System.out.println(url);
-				System.out.println(p);
+				//System.out.println(url);
+				//System.out.println(p);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

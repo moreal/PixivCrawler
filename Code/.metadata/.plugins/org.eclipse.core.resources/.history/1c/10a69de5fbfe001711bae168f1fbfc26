@@ -1,0 +1,37 @@
+package me.moreal.main;
+
+import me.moreal.util.Config;
+
+public class Main {
+	public static void main(String args[])
+	{
+		if(!Config.checkConfigFile())
+			Config.createConfigFile();
+		
+		Config.initByConfig();
+		
+		Config.loadConfigFile();
+		
+		System.out.println(Config.illust_id + "Start");
+		new PixivParser().run();
+		new PixivParser().run();
+		new PixivParser().run();
+		new PixivParser().run();
+		/*
+		try {
+			SSLSocket s = (SSLSocket) SSLSocketFactory.getDefault().createSocket("www.pixiv.net",80);
+			//s.connect(new Socket("www.pixiv.net",80).getRemoteSocketAddress(), 200);
+			s.getOutputStream().write("Server Hello".getBytes());
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			String str;
+			while((str = br.readLine()) != null)
+				System.out.println(str);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	}
+}

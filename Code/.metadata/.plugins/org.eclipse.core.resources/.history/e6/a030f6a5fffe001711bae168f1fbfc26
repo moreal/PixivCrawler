@@ -1,0 +1,129 @@
+package me.moreal.util;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Config {
+	private static String dir = System.getProperty("user.dir") + "/PixivCrawler/";
+	private static String config = dir + "config.txt";
+	
+	public static String DIRECTORY = dir + "Pictures/";
+	public static int leastView = 0, leastGood = 0;
+	public static File lastFind = null;
+	public static int illust_id = 0;
+
+	public static boolean checkConfigFile() {
+		return new File(config).exists();
+	}
+
+	public static void createConfigFile() {
+
+		File directory = new File(dir);
+
+		if (!directory.exists())
+			directory.mkdirs();
+	
+		File f = new File(config);
+
+		try {
+			if (!f.exists())
+				f.createNewFile();
+			
+			FileWriter fw = new FileWriter(f);
+			
+			fw.write(String.format("Directory?%s\n",dir + "Pictures/"));
+			fw.write(String.format("LeastGood?%d\n",1000));
+			fw.write(String.format("LeastView?%d\n",2000));
+			
+			fw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadConfigFile() {
+		try {
+			@SuppressWarnings("resource")
+			Scanner sc = new Scanner(new FileInputStream(new File(config))).useDelimiter("\\?|\n");
+
+			String attr = null;
+			
+			while (sc.hasNext()) {
+				System.out.println("WHILE");
+				attr = sc.next();
+				
+				System.out.println(attr);
+				
+				if (attr == null) 
+					break;
+				
+				if (attr.equals("Directory")) {
+					DIRECTORY = sc.next();
+				} else if (attr.equals("LeastView")) {
+					leastView = sc.nextInt();
+				} else if (attr.equals("LeastGood")) {
+					leastGood = sc.nextInt();
+				}
+			}
+			
+			sc.close();
+		} catch (FileNotFoundException e1) {}
+		System.out.println("WHY SCAN END?");
+		System.out.println("TEST");
+		try {
+			lastFind = new File(dir + ".last");
+			
+			if(!lastFind.exists()) {
+				lastFind.createNewFile();
+				FileWriter fw = new FileWriter(lastFind);
+				fw.write("0");
+				fw.close();
+			}
+			
+			Scanner scanner = new Scanner(new FileInputStream(lastFind));
+			System.out.println("TEST SCAN");
+			illust_id = scanner.nextInt();
+			System.out.println("TEST SCAN END");
+			scanner.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void saveStartNum() {
+		
+		//if(lastFind.exists())
+			//lastFind.delete();
+		
+		try {
+			//lastFind.createNewFile();
+			
+			FileWriter fw = new FileWriter(lastFind);
+			
+			fw.write("" + illust_id);
+			
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void initByConfig() {
+		File directory = new File(DIRECTORY);
+		System.out.println("TEST INIT");
+		if (!directory.exists()) {
+			directory.mkdirs();
+		} else if (directory.isFile()) {
+			System.out.println("[!] There is already file which has same name : " + directory.getAbsolutePath());
+		}
+	}
+}
